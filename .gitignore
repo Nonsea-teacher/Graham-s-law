@@ -1,0 +1,15 @@
+# การตั้งค่าเฉพาะเครื่อง
+.claude/settings.local.json
+
+# ไฟล์ภาพชั่วคราวจากการตรวจงาน
+tools/shot-*.jpg
+tools/tune*.mjs
+
+# ไฟล์ที่ไม่เกี่ยวกับโปรเจกต์นี้
+qr-*.png
+
+# ระบบปฏิบัติการและเครื่องมือ
+Thumbs.db
+desktop.ini
+.DS_Store
+node_modules/

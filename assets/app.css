@@ -1,0 +1,769 @@
+/* ═══════════════════════════════════════════════════════════
+   สนามแข่งโมเลกุล — โปสเตอร์กีฬา
+   ต้องอ่านออกทั้งบนโปรเจกเตอร์หลังห้องและบนแท็บเล็ตของนักเรียน
+   ธีมสว่างล็อกไว้ ห้องเรียนแสงจ้าและโปรเจกเตอร์แสดงพื้นมืดเป็นสีขุ่น
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* พื้นหลังต้องเป็นเทากลาง ไม่อมฟ้า
+     ตอนใช้พื้นอมฟ้า สีน้ำเงินของทีมเบาจมหายไปกับพื้น จนแยกไม่ออกว่าอันไหนคือแก๊ส */
+  --ground:   #F0F1F3;
+  --paper:    #FFFFFF;
+  --ink:      #14161C;
+  --ink-2:    #565C6B;
+  --line:     #D9DBE1;
+
+  --blue:     #0B57F0;
+  --blue-dk:  #0A3FB0;
+  --amber:    #E08A00;
+  --red:      #DB2216;
+  --red-dk:   #A5170E;
+
+  --shadow-lg: 0 2px 0 rgba(14,20,38,.10), 0 18px 40px rgba(14,20,38,.10);
+  --shadow-sm: 0 2px 0 rgba(14,20,38,.10);
+
+  --ease: cubic-bezier(.2,.9,.3,1);
+  --z-track: 1;
+  --z-overlay: 20;
+  --z-bar: 40;
+
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* คลาสที่กำหนด display เอง (grid/flex) จะทับ display:none ของ [hidden]
+   ทำให้องค์ประกอบที่สั่งซ่อนยังค้างอยู่บนจอ กติกานี้ปิดช่องนั้นทั้งหมด */
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: 'Kanit', 'Noto Sans Thai', 'Leelawadee UI', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font: inherit; color: inherit; cursor: pointer; }
+:where(button):focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+b { font-weight: 700; }
+
+/* ─────────── แถบบน ─────────── */
+
+.bar {
+  position: sticky; top: 0; z-index: var(--z-bar);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  padding: 12px clamp(16px, 3vw, 34px);
+  background: var(--ink);
+  color: #fff;
+}
+
+.brand {
+  font-weight: 700; font-size: 17px; letter-spacing: .01em;
+}
+
+.steps { display: flex; align-items: center; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.steps li { display: flex; align-items: center; gap: 7px; }
+.steps li + li::before {
+  content: ''; width: 14px; height: 2px; background: rgba(255,255,255,.28); margin-right: 1px;
+}
+.steps button {
+  position: relative;
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.32); background: none; color: #fff;
+  font-weight: 700; font-size: 15px; line-height: 1;
+  transition: background .18s var(--ease), border-color .18s var(--ease), transform .18s var(--ease);
+}
+/* วงกลมเล็กเพื่อความสวย แต่พื้นที่กดต้องใหญ่พอสำหรับนิ้วบนแท็บเล็ต */
+.steps button::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; }
+.steps button:hover { border-color: #fff; }
+.steps button[aria-current='step'] { background: #fff; color: var(--ink); border-color: #fff; }
+.steps li span { font-size: 13px; color: rgba(255,255,255,.72); }
+.steps li:has(button[aria-current='step']) span { color: #fff; font-weight: 600; }
+
+@media (max-width: 860px) {
+  .steps li span { display: none; }
+  .steps li + li::before { width: 8px; }
+}
+
+/* ─────────── โครงหน้า ─────────── */
+
+main { flex: 1; display: flex; flex-direction: column; }
+
+.screen {
+  width: 100%;
+  max-width: 1180px;
+  /* margin: auto จัดกึ่งกลางแนวตั้งโดยไม่ตัดส่วนบนทิ้งเมื่อเนื้อหายาวเกินจอ
+     ต่างจาก justify-content: center ที่ล้นแล้วโดนตัด */
+  margin: auto;
+  padding: clamp(18px, 3vh, 34px) clamp(16px, 3vw, 34px) 26px;
+}
+.screen[hidden] { display: none; }
+.screen.is-entering { animation: pop-in .4s var(--ease) both; }
+
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.mega {
+  margin: clamp(10px, 3vh, 34px) 0 10px;
+  font-size: clamp(34px, 6.4vw, 76px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.titlerow {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+  margin-bottom: clamp(12px, 2.2vh, 24px);
+}
+.titlerow .title { margin: 0; }
+.titlerow-tools { display: flex; align-items: center; gap: clamp(14px, 2vw, 26px); flex-wrap: wrap; }
+.titlerow-tools .btn { min-height: 50px; }
+
+.title {
+  margin: 0 0 clamp(14px, 2.4vh, 26px);
+  font-size: clamp(24px, 3.4vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.lead { margin: 0 0 clamp(18px, 3vh, 32px); font-size: clamp(17px, 2vw, 21px); color: var(--ink-2); }
+
+/* ─────────── การ์ดแก๊สหน้าแรก ─────────── */
+
+.duel-cards {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  gap: clamp(10px, 2vw, 24px);
+}
+
+.gcard {
+  position: relative;
+  display: flex; flex-direction: column; gap: 2px;
+  padding: clamp(16px, 2.4vw, 26px);
+  border-radius: 20px;
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.gcard-blue { background: var(--blue); }
+.gcard-red  { background: var(--red); }
+
+.gcard::after {
+  content: ''; position: absolute; right: -40px; bottom: -60px;
+  width: 190px; height: 190px; border-radius: 50%;
+  background: rgba(255,255,255,.10);
+}
+
+.gcard-tag {
+  align-self: flex-start;
+  padding: 3px 12px; border-radius: 100px;
+  background: rgba(255,255,255,.22);
+  font-size: 13px; font-weight: 600; letter-spacing: .04em;
+}
+.gcard-formula {
+  font-size: clamp(44px, 7vw, 84px); font-weight: 800; line-height: 1.05; margin-top: 6px;
+}
+.gcard-name { font-size: clamp(14px, 1.5vw, 17px); opacity: .9; }
+/* ป้ายกับตัวเลขต้องไม่ต่างขนาดกันจนดูเอียง
+   สูตรเคมีเป็นพระเอกของการ์ดอยู่แล้ว บรรทัดมวลจึงคุมให้อยู่ระดับเดียวกันทั้งบรรทัด */
+.gcard-mass {
+  display: flex; align-items: baseline; gap: 8px;
+  margin-top: 12px;
+  font-size: clamp(15px, 1.7vw, 19px);
+  font-weight: 500;
+  opacity: .95;
+}
+.gcard-mass b { font-size: 1.45em; font-weight: 800; letter-spacing: -.01em; }
+
+.versus {
+  align-self: center;
+  font-size: clamp(18px, 2.6vw, 30px); font-weight: 800; color: var(--ink-2);
+  letter-spacing: .04em;
+}
+
+@media (max-width: 620px) {
+  .duel-cards { grid-template-columns: 1fr; }
+  .versus { padding: 2px 0; }
+  .gcard { flex-direction: row; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .gcard-formula { margin-top: 0; }
+  .gcard-mass { margin-top: 0; margin-left: auto; }
+}
+
+/* ─────────── โพลทายผล ─────────── */
+
+.poll { margin-top: clamp(20px, 3.4vh, 38px); }
+.poll-q { margin: 0 0 12px; font-size: 19px; font-weight: 600; }
+
+.poll-opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.poll-opts button {
+  padding: 18px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: var(--paper);
+  font-size: 18px; font-weight: 600; line-height: 1.3;
+  box-shadow: var(--shadow-sm);
+  transition: transform .16s var(--ease), background .16s var(--ease), color .16s var(--ease);
+}
+.poll-opts button:hover { transform: translateY(-2px); }
+.poll-opts button[aria-pressed='true'] { background: var(--ink); color: #fff; }
+
+/* ─────────── ลู่แข่ง ─────────── */
+
+.track-set {
+  position: relative;
+  display: flex; flex-direction: column;
+  gap: clamp(10px, 1.6vh, 18px);
+}
+
+.track {
+  display: grid;
+  grid-template-columns: clamp(92px, 12vw, 132px) 1fr clamp(96px, 13vw, 150px);
+  align-items: stretch;
+  gap: clamp(8px, 1.4vw, 16px);
+}
+
+.plate {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 8px clamp(8px, 1.4vw, 16px);
+  border-radius: 14px;
+  color: #fff;
+  line-height: 1.1;
+}
+.plate-blue  { background: var(--blue); }
+.plate-amber { background: var(--amber); }
+.plate-red   { background: var(--red); }
+.plate-formula { font-size: clamp(22px, 3vw, 34px); font-weight: 800; }
+.plate-mass { font-size: clamp(12px, 1.3vw, 14px); opacity: .92; }
+
+.strip {
+  position: relative;
+  /* ต้องกำหนดความสูงตายตัว ไม่ใช่ min-height
+     เพราะ canvas ข้างในสูง 100% ถ้าพ่อแม่สูงอัตโนมัติ ความสูงจะอ้างอิงกันไปมา
+     แล้วลู่จะยืดขึ้นเรื่อย ๆ ทุกครั้งที่วัดขนาดใหม่ */
+  /* ความสูงลู่ถูกจำกัดด้วยของที่ต้องอยู่ใต้ลู่ในจอเดียวกัน
+     (คำอธิบาย ปุ่ม และกล่องคำเฉลย) ไม่ใช่ด้วยความสวยอย่างเดียว */
+  height: clamp(88px, 14vh, 160px);
+  border-radius: 14px;
+  background: var(--paper);
+  border: 2px solid var(--line);
+  overflow: hidden;
+}
+
+/* สามลู่ต้องเตี้ยลง เพื่อให้แถบสรุปรูปแบบอยู่ในจอเดียวกับลู่แข่ง
+   ไม่งั้นครูต้องเลื่อนจอตอนที่นักเรียนกำลังเทียบตัวเลข */
+.is-trio { gap: 10px; }
+.is-trio .strip { height: clamp(74px, 13vh, 140px); }
+.strip canvas { display: block; width: 100%; height: 100%; }
+
+/* ธงเส้นชัยวาดอยู่ในผืนผ้าใบ (ดู drawFinish ใน app.js)
+   ไม่ใช้ element ทับ เพราะป้ายนักวิ่งต้องวาดทับธงได้ตอนเข้าเส้นชัย */
+
+/* ด่านแข่งคู่ไม่มีคอลัมน์ผลการวัด ลู่จึงกว้างเต็มที่ */
+.is-duel .track { grid-template-columns: clamp(92px, 12vw, 132px) 1fr; }
+
+.result {
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-end;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.result .time {
+  font-size: clamp(28px, 4.6vw, 54px); font-weight: 800; line-height: 1; letter-spacing: -.02em;
+}
+.result .unit { font-size: 13px; color: var(--ink-2); }
+.result .badge {
+  padding: 5px 14px; border-radius: 100px;
+  background: var(--ink); color: #fff;
+  font-size: clamp(14px, 1.6vw, 18px); font-weight: 700;
+}
+.track.is-won .result .badge { background: var(--blue); }
+
+.result.pop { animation: badge-pop .45s var(--ease) both; }
+
+/* จอแคบ: ป้ายชื่อแก๊สกับผลลัพธ์ขึ้นไปอยู่บรรทัดบน ลู่แข่งได้ความกว้างเต็มแถว
+   ถ้าคงสามคอลัมน์ไว้ ลู่จะเหลือแค่ 139px แคบกว่าป้ายชื่อของตัวเอง
+   ทั้งที่ลู่คือเนื้อหา ส่วนป้ายเป็นแค่ฉลาก
+   บล็อกนี้ต้องอยู่หลังกฎของ .plate .strip .result ไม่งั้นจะถูกทับ */
+@media (max-width: 720px) {
+  .track { grid-template-columns: 1fr auto; gap: 7px 10px; }
+  .plate {
+    grid-column: 1; grid-row: 1;
+    flex-direction: row; align-items: baseline; gap: 9px;
+    padding: 5px 12px; border-radius: 10px;
+  }
+  .plate-formula { font-size: 20px; }
+  .plate-mass { font-size: 13px; }
+  .strip { grid-column: 1 / -1; grid-row: 2; }
+  .result { grid-column: 2; grid-row: 1; flex-direction: row; align-items: baseline; gap: 6px; }
+  .result .time { font-size: 26px; }
+  .result .unit { font-size: 12px; }
+  .is-duel .track { grid-template-columns: 1fr; }
+  .is-trio .strip { height: clamp(78px, 11vh, 110px); }
+
+  /* แถบเครื่องมือของด่าน 3 กินพื้นที่สูงเกินไปบนมือถือ ย่อนาฬิกาลงให้อยู่แถวเดียวกับปุ่ม */
+  .titlerow { gap: 10px; margin-bottom: 12px; }
+  .titlerow-tools { gap: 8px; width: 100%; }
+  .titlerow-tools .btn { min-height: 46px; padding: 0 13px; font-size: 15px; }
+  .clock { padding: 4px 10px; margin-left: auto; }
+  .clock b { font-size: 22px; min-width: 3ch; }
+  .clock i { font-size: 12px; }
+  .setrow { gap: 8px; margin-bottom: 10px; }
+  .setrow-note { flex-basis: 100%; }
+}
+@keyframes badge-pop {
+  0%   { transform: scale(.6); opacity: 0; }
+  60%  { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.countdown {
+  position: absolute; inset: 0; z-index: var(--z-overlay);
+  display: grid; place-items: center;
+  background: rgba(238,241,248,.82);
+  border-radius: 18px;
+}
+.countdown span {
+  font-size: clamp(70px, 16vw, 190px); font-weight: 800; line-height: 1;
+  color: var(--ink);
+  animation: tick .6s var(--ease);
+}
+@keyframes tick {
+  from { transform: scale(1.5); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* ─────────── แถบปุ่ม ─────────── */
+
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pills button {
+  appearance: none;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font-weight: 600;
+  transition: background .14s var(--ease), border-color .14s var(--ease), color .14s var(--ease);
+}
+.pills button:hover { border-color: var(--ink-2); }
+.pills button[aria-checked='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+/* จอแคบ: ขึ้นบรรทัดใหม่เต็มความกว้าง
+   จอกว้าง: flex 0 0 auto กันไม่ให้กลุ่มปุ่มถูกบีบจนปุ่มตกบรรทัดเรียงเป็นตอน */
+#pair-pick { flex: 1 1 100%; }
+@media (min-width: 900px) {
+  #pair-pick { flex: 0 0 auto; margin-left: auto; }
+}
+#pair-pick button {
+  display: flex; align-items: center; gap: 7px;
+  min-height: 48px; padding: 0 13px;
+  font-size: clamp(14px, 1.5vw, 17px);
+}
+.vs-mini { font-size: .75em; font-weight: 400; color: var(--ink-2); }
+.pills button[aria-checked='true'] .vs-mini { color: rgba(255,255,255,.7); }
+
+.legend {
+  margin: 12px 0 0;
+  font-size: clamp(13px, 1.5vw, 15px);
+  color: var(--ink-2);
+}
+
+.actionbar {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  margin-top: clamp(12px, 2vh, 20px);
+}
+
+
+.btn {
+  border: 0; border-radius: 14px;
+  padding: 0 clamp(20px, 3vw, 34px);
+  min-height: 56px;
+  font-size: clamp(17px, 1.9vw, 21px); font-weight: 700;
+  /* ห้ามตัดคำกลางป้ายปุ่ม เช่น "สโลว์โม / ชัน" ยอมให้ปุ่มตกบรรทัดทั้งปุ่มดีกว่า */
+  white-space: nowrap;
+  transition: transform .14s var(--ease), background .14s var(--ease), opacity .14s var(--ease);
+}
+.btn:active { transform: scale(.98); }
+.btn:disabled { opacity: .4; cursor: default; transform: none; }
+
+.btn-go { background: var(--ink); color: #fff; box-shadow: var(--shadow-sm); }
+.btn-go:hover:not(:disabled) { background: #2a2f3c; }
+
+/* สถานะ "กดอีกครั้งเพื่อยืนยัน" — เตือนว่ากำลังจะทับข้อมูลที่วัดไว้แล้ว */
+.btn-go.is-armed { background: var(--amber); }
+.btn-go.is-armed:hover { background: #c67a00; }
+
+.btn-slow {
+  background: var(--paper);
+  color: var(--ink);
+  border: 2px solid var(--line);
+  min-height: 52px;
+}
+.btn-slow:hover { border-color: var(--ink-2); }
+.btn-slow[aria-pressed='true'] {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #fff;
+}
+
+/* นาฬิกาเป็นบล็อกของตัวเอง และตัวเลขมีความกว้างตายตัว
+   ถ้าปล่อยให้ความกว้างเปลี่ยนตามจำนวนหลัก (4.7 → 12.3) ทุกอย่างในแถวจะขยับตามทุกเฟรม
+   กลายเป็นข้อความสั่นตลอดการแข่ง */
+.clock {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  padding: 6px 16px;
+  border-radius: 14px;
+  background: var(--paper);
+  border: 2px solid var(--line);
+}
+.clock b {
+  min-width: 3.2ch;
+  text-align: right;
+  font-size: clamp(26px, 3.6vw, 40px);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+}
+.clock i { font-size: 14px; font-weight: 500; font-style: normal; color: var(--ink-2); }
+
+/* คำเฉลยที่ขึ้นหลังแข่งจบ — คำถามอยู่ที่หัวเรื่องของหน้าแล้ว */
+.reveal {
+  margin: clamp(12px, 2vh, 20px) 0 0;
+  padding: clamp(12px, 1.6vw, 18px) clamp(18px, 2.4vw, 28px);
+  border-radius: 18px;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  box-shadow: var(--shadow-lg);
+  font-size: clamp(19px, 2.5vw, 30px);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  animation: rise .4s var(--ease) both;
+}
+.reveal .win { color: var(--blue); }
+.reveal-sub {
+  display: block;
+  margin-top: 6px;
+  font-size: clamp(15px, 1.7vw, 19px);
+  font-weight: 400;
+  color: var(--ink-2);
+}
+
+/* ─────────── แถบสรุปรูปแบบ ─────────── */
+
+/* แถวเลือกชุดการทดลองของด่าน 3 */
+.setrow {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  margin-bottom: clamp(10px, 1.6vh, 18px);
+}
+#set-pick button { min-height: 46px; padding: 0 20px; font-size: clamp(15px, 1.6vw, 17px); }
+.setrow-note { margin: 0; font-size: clamp(13px, 1.5vw, 15px); color: var(--ink-2); }
+
+/* ─────────── หน้าสูตร ─────────── */
+
+.split4 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, .92fr);
+  gap: clamp(20px, 3vw, 40px);
+  align-items: start;
+}
+.side4 { display: flex; flex-direction: column; gap: clamp(14px, 2vh, 22px); }
+.side4 .graham, .side4 .calc { margin-top: 0; }
+
+@media (max-width: 940px) {
+  .split4 { grid-template-columns: 1fr; }
+}
+
+.build { display: flex; flex-direction: column; gap: clamp(8px, 1.4vh, 14px); }
+
+.build-line, .build-bridge, .formula, .legend-key, .graham, .calc { opacity: 0; }
+.is-revealed { animation: rise .45s var(--ease) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+.build-line {
+  margin: 0;
+  font-size: clamp(19px, 2.8vw, 32px); font-weight: 600;
+}
+.build-line .arw { color: var(--ink-2); margin: 0 10px; }
+.build-line b { color: var(--red); }
+
+/* รากแบบอยู่ในบรรทัด — ขีดบนต้องคลุมตัวแปรที่อยู่ใต้ราก
+   ถ้าเขียนเป็นอักขระ √ เฉย ๆ จะอ่านได้ว่า "ราก แล้วก็ M" ไม่ใช่ "รากของ M" */
+/* ใช้ inline-block + วาง svg แบบ absolute เพื่อให้เส้นฐานของทั้งก้อน
+   มาจากตัวอักษรใต้ราก ไม่ใช่จากกล่อง svg ไม่งั้น √M จะลอยสูงกว่าข้อความข้าง ๆ */
+.sqrt-inline {
+  display: inline-block;
+  position: relative;
+  padding-left: .56em;
+}
+.sqrt-inline svg {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: .5em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sqrt-inline > span {
+  display: inline-block;
+  border-top: 2.5px solid currentColor;
+  padding: 2px 4px 0 2px;
+}
+
+/* สะพานจาก "เวลา" ไป "อัตราการแพร่"
+   ถ้าไม่มีบรรทัดนี้ นักเรียนต้องพลิกส่วนกลับเองในหัว ซึ่งเป็นจุดที่หลุดกันมากที่สุด */
+.build-bridge {
+  margin: 4px 0 2px;
+  padding: 10px 16px;
+  border-left: 0;
+  border-radius: 12px;
+  background: #fff;
+  border: 2px solid var(--line);
+  font-size: clamp(16px, 2.1vw, 22px);
+  font-weight: 500;
+}
+.build-bridge b { font-weight: 700; }
+.build-bridge b:last-child { color: var(--blue); }
+
+.formula {
+  display: flex; flex-direction: column; align-items: stretch;
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: clamp(14px, 2vw, 22px) clamp(18px, 3vw, 34px);
+  border-radius: 20px;
+  background: var(--ink); color: #fff;
+  box-shadow: var(--shadow-lg);
+}
+
+/* สมการภาษาไทยวางไว้เหนือสมการสัญลักษณ์ในกล่องเดียวกัน
+   เพื่อให้เห็นว่าเป็นอันเดียวกัน แค่เขียนย่อลง ไม่ใช่ของใหม่ */
+.formula-thai {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  font-size: clamp(15px, 1.9vw, 21px);
+  font-weight: 600;
+}
+.eq-sm { font-size: 1.15em; font-weight: 700; }
+
+.formula-split {
+  display: flex; align-items: center; gap: 12px;
+  margin: clamp(10px, 1.6vh, 16px) 0;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, .62);
+  white-space: nowrap;
+}
+.formula-split::before, .formula-split::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, .22);
+}
+
+.formula-sym {
+  display: flex; align-items: center; justify-content: center;
+  gap: clamp(10px, 2vw, 20px);
+}
+.frac { display: inline-flex; flex-direction: column; align-items: center; }
+.frac i {
+  font-style: normal; font-weight: 700;
+  font-size: clamp(24px, 3.6vw, 44px); line-height: 1.12;
+  padding: 0 6px;
+}
+.frac i:first-child { border-bottom: 3px solid currentColor; }
+.eq { font-size: clamp(26px, 3.6vw, 46px); font-weight: 700; }
+/* วาดเครื่องหมายรากเป็น SVG ที่ยืดเต็มความสูงของเศษส่วน
+   ถ้าใช้อักขระ √ ปกติ ขาเกี่ยวจะสั้นกว่าเศษส่วน ทำให้ดูเหมือนรากครอบแค่ตัวเศษ
+   ซึ่งผิดความหมายทางคณิตศาสตร์ */
+.root { display: inline-flex; align-items: stretch; }
+.rsign {
+  width: clamp(18px, 2.4vw, 26px);
+  align-self: stretch;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.root .frac { border-top: 3px solid currentColor; padding-top: 6px; margin-left: -1px; }
+
+/* คำอธิบายสัญลักษณ์ — จับคู่ r กับ M ของแก๊สตัวเดียวกันไว้บรรทัดเดียว
+   นักเรียนจะได้เห็นว่า "ตัวเบา" อยู่บนฝั่ง r แต่ "ตัวหนัก" อยู่บนฝั่ง M */
+.legend-key {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-top: 12px;
+  font-size: clamp(13.5px, 1.6vw, 16px);
+  color: var(--ink-2);
+}
+.legend-key > div { display: flex; gap: 8px 26px; flex-wrap: wrap; }
+.legend-key > div > span { display: inline-flex; gap: 8px; }
+.legend-key b {
+  display: inline-block;
+  min-width: 2.1em;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.graham {
+  margin-top: clamp(18px, 3vh, 30px);
+  padding: clamp(16px, 2.4vw, 26px);
+  border-radius: 20px;
+  background: var(--paper);
+  border-top: 8px solid var(--amber);
+  box-shadow: var(--shadow-lg);
+  max-width: 74ch;
+}
+.graham-head { display: flex; align-items: center; gap: 16px; margin-bottom: 10px; }
+.graham-year {
+  padding: 6px 16px; border-radius: 12px;
+  background: var(--amber); color: #fff;
+  font-size: clamp(20px, 2.6vw, 30px); font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.graham-head b { display: block; font-size: clamp(18px, 2.2vw, 24px); font-weight: 700; }
+.graham-head span { font-size: 14px; color: var(--ink-2); }
+.graham p { margin: 0; font-size: clamp(14px, 1.6vw, 16.5px); }
+
+/* ─────────── เครื่องแทนค่า ─────────── */
+
+.calc {
+  margin-top: clamp(18px, 3vh, 30px);
+  padding: clamp(11px, 1.6vw, 16px) clamp(15px, 2.1vw, 22px) clamp(12px, 1.7vw, 18px);
+  border-radius: 20px;
+  background: var(--paper);
+  border: 2px solid var(--line);
+}
+.calc-title { margin: 0 0 10px; font-size: 18px; font-weight: 700; }
+.calc-pick { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.calc-vs { font-weight: 600; color: var(--ink-2); }
+
+.pickgroup { display: flex; gap: 8px; flex-wrap: wrap; }
+.pickgroup button {
+  min-height: 44px; padding: 0 13px;
+  border: 2px solid var(--line); border-radius: 12px;
+  background: var(--ground);
+  font-size: 17px; font-weight: 600;
+  transition: background .14s var(--ease), color .14s var(--ease), border-color .14s var(--ease);
+}
+.pickgroup button[aria-pressed='true'] { background: var(--blue); border-color: var(--blue); color: #fff; }
+.pickgroup[data-side='b'] button[aria-pressed='true'] { background: var(--red); border-color: var(--red); }
+
+/* ตารางสามคอลัมน์ ทำให้เครื่องหมายเท่ากับของทุกบรรทัดอยู่ตรงกันเป็นแนวเดียว
+   อ่านไล่ลงมาได้เหมือนการแสดงวิธีทำในสมุด */
+.calc-steps {
+  margin: 14px 0 0; padding: 0; list-style: none;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 4px 10px;
+  font-size: clamp(15px, 1.7vw, 19px);
+  font-variant-numeric: tabular-nums;
+}
+.calc-steps li { display: contents; }
+.calc-steps .lhs { justify-self: end; }
+.calc-steps .rhs { display: flex; align-items: center; }
+
+/* สถานะเริ่มต้นเมื่อยังเลือกแก๊สชนิดเดียวกันทั้งสองฝั่ง */
+.calc-note {
+  display: block !important;
+  grid-column: 1 / -1;
+  font-size: clamp(14px, 1.6vw, 17px);
+  color: var(--ink-2);
+}
+
+.calc-answer {
+  display: block !important;
+  grid-column: 1 / -1;
+  margin-top: 3px;
+  padding-top: 8px;
+  border-top: 2px solid var(--line);
+  font-size: clamp(16px, 1.8vw, 19px);
+}
+.calc-answer b { font-weight: 700; }
+
+/* เศษส่วนและรากในขั้นตอนคำนวณใช้โครงเดียวกับสมการ แต่ย่อขนาดลง */
+.calc-steps .frac i { font-size: clamp(13px, 1.5vw, 16px); padding: 0 5px; }
+.calc-steps .frac i:first-child { border-bottom-width: 2px; }
+.calc-steps .eq { font-size: clamp(15px, 1.6vw, 18px); }
+.calc-steps .rsign { width: 11px; stroke-width: 3.4; }
+.calc-steps .root .frac { border-top-width: 2px; padding-top: 3px; }
+.calc-steps .sqrt-inline > span { border-top-width: 2px; }
+
+/* ─────────── แบบฝึกหัด ─────────── */
+
+.quiz { display: flex; flex-direction: column; gap: 16px; }
+
+.q {
+  padding: clamp(16px, 2.4vw, 26px);
+  border-radius: 20px;
+  background: var(--paper);
+  border: 2px solid var(--line);
+  box-shadow: var(--shadow-sm);
+}
+.q-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.q-num {
+  width: 34px; height: 34px; flex: none;
+  display: grid; place-items: center;
+  border-radius: 10px; background: var(--ink); color: #fff;
+  font-weight: 800; font-size: 16px;
+}
+.q-text { margin: 0; font-size: clamp(17px, 2vw, 21px); font-weight: 600; }
+.q-sub { margin: 6px 0 0 46px; font-size: 15px; color: var(--ink-2); }
+
+.q-figure { margin: 14px 0 2px 46px; max-width: 470px; }
+.q-figure svg { display: block; width: 100%; height: auto; }
+
+/* จอแคบต้องคืนพื้นที่ย่อหน้าให้ภาพ ไม่งั้นตัวหนังสือในภาพย่อจนอ่านไม่ออก */
+@media (max-width: 620px) {
+  .q-figure { margin-left: 0; }
+  .q-sub { margin-left: 0; }
+}
+
+/* ─────────── แถบล่าง ─────────── */
+
+.nav {
+  position: sticky; bottom: 0; z-index: var(--z-bar);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 12px clamp(16px, 3vw, 34px);
+  background: var(--paper);
+  border-top: 2px solid var(--line);
+}
+
+.btn-ghost { background: var(--ground); color: var(--ink); }
+.btn-next { background: var(--blue); color: #fff; }
+.btn-next:hover:not(:disabled) { background: var(--blue-dk); }
+
+@media (max-width: 620px) {
+  .nav .btn { flex: 1; }
+}
+
+/* ─────────── ลดการเคลื่อนไหว ───────────
+   โมเลกุลยังวิ่ง เพราะการวิ่งคือเนื้อหาของบทเรียน
+   ที่ตัดคือการเคลื่อนไหวของส่วนติดต่อผู้ใช้                */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  .build-line, .build-bridge, .formula, .legend-key, .graham, .calc { opacity: 1; }
+}

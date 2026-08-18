@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "gas-diffusion",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["tools/serve.mjs", "5180"],
+      "port": 5180
+    }
+  ]
+}

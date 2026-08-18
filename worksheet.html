@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>ใบบันทึกผล · สนามแข่งโมเลกุล</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='9' cy='16' r='6' fill='%230B57F0'/%3E%3Ccircle cx='23' cy='16' r='6' fill='%23E02216'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ink: #14161C;
+    --ink-2: #565C6B;
+    --line: #C9CCD4;
+    --line-soft: #E3E5EA;
+    --blue: #0B57F0;
+    --red: #DB2216;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: #EDEEF1;
+    color: var(--ink);
+    font-family: 'Kanit', 'Noto Sans Thai', system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 16px auto;
+    padding: 14mm 15mm;
+    background: #fff;
+    box-shadow: 0 8px 30px rgba(20, 22, 28, .14);
+  }
+
+  /* ---------- หัวกระดาษ ---------- */
+  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+  .head h1 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -.01em; }
+  .head p { margin: 2px 0 0; font-size: 12px; color: var(--ink-2); }
+  .who { display: flex; gap: 12px; font-size: 12px; white-space: nowrap; }
+  .who span { display: flex; align-items: flex-end; gap: 5px; }
+  .who i { display: block; width: 26mm; border-bottom: 1px solid var(--line); font-style: normal; }
+  .who span:last-child i { width: 14mm; }
+
+  .rule { height: 3px; background: var(--ink); margin: 8px 0 0; }
+
+  /* ---------- หัวข้อตอน ---------- */
+  .part { margin-top: 6mm; }
+  .part-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 3mm; }
+  .part-no {
+    width: 20px; height: 20px; flex: none;
+    display: grid; place-items: center;
+    background: var(--ink); color: #fff;
+    border-radius: 5px; font-size: 12px; font-weight: 700;
+  }
+  .part-head b { font-size: 15px; font-weight: 700; }
+  .part-head span { font-size: 11.5px; color: var(--ink-2); }
+
+  /* ---------- ตาราง ---------- */
+  table { width: 100%; border-collapse: collapse; }
+  th, td { border: 1px solid var(--line); padding: 0; }
+  th {
+    padding: 4px 8px;
+    background: #F2F3F6;
+    font-size: 11.5px; font-weight: 600; color: var(--ink-2);
+    text-align: center;
+  }
+  th:first-child { text-align: left; }
+  td { height: 9mm; }
+  .gas {
+    padding: 0 8px;
+    font-size: 15px; font-weight: 700;
+    white-space: nowrap;
+  }
+  /* สามชุดเรียงข้างกัน ทำให้ใบงานจบในหน้าเดียว
+     ถ้าเรียงลงมาเป็นตารางเดียว 12 แถว จะยาวเกิน A4 ไปเกือบ 5 เซนติเมตร */
+  .sets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5mm; }
+  .setname {
+    background: var(--ink); color: #fff;
+    padding: 1.5mm 8px;
+    border-radius: 5px 5px 0 0;
+    font-size: 12px; font-weight: 600;
+  }
+  .setbox th { font-size: 10.5px; padding: 3px 4px; }
+  .setbox td { height: 8mm; }
+  .setbox .gas { font-size: 14px; padding: 0 6px; }
+
+  /* ---------- ตอนที่ 2 ---------- */
+  .calc { width: 100%; border-collapse: collapse; }
+  .calc th { text-align: center; }
+  .calc th:first-child { text-align: left; }
+  .calc td { height: 9mm; padding: 0 8px; font-size: 13px; }
+  .calc .pair { font-weight: 600; white-space: nowrap; }
+  .calc .set { color: var(--ink-2); font-weight: 400; font-size: 11.5px; }
+  .calc .given { text-align: center; white-space: nowrap; }
+  .calc .prompt { text-align: center; font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+  .blank { display: inline-block; min-width: 14mm; border-bottom: 1.5px solid var(--ink); }
+  .blank-sm { display: inline-block; min-width: 11mm; border-bottom: 1px solid var(--line); }
+
+  /* ---------- ตอนที่ 3 ---------- */
+  .pairs {
+    display: flex; gap: 6mm; flex-wrap: wrap;
+    padding: 4mm 5mm;
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+  }
+  .pairbox { display: flex; align-items: baseline; gap: 6px; font-size: 14px; }
+  .pairbox b { font-size: 19px; font-weight: 700; }
+  .pairbox .arrow { color: var(--ink-2); }
+  .pairbox .blank { min-width: 13mm; }
+
+  .ask { margin: 4mm 0 0; font-size: 13.5px; font-weight: 600; }
+  .writeline { height: 8mm; border-bottom: 1px solid var(--line); }
+
+  /* ---------- ตอนที่ 4 ---------- */
+  .concl { display: flex; flex-direction: column; gap: 3.5mm; font-size: 13.5px; }
+  .concl > div { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .concl .blank { min-width: 22mm; }
+  .concl .wide { min-width: 46mm; }
+  .concl em { font-style: normal; font-size: 11.5px; color: var(--ink-2); }
+
+  .foot {
+    margin-top: 7mm; padding-top: 3mm;
+    border-top: 1px solid var(--line-soft);
+    display: flex; justify-content: space-between; gap: 12px;
+    font-size: 11px; color: var(--ink-2);
+  }
+  .foot a { color: var(--ink); }
+
+  @media print {
+    body { background: #fff; }
+    .sheet { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; }
+    .foot a { display: none; }
+    @page { size: A4; margin: 13mm 14mm; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <div class="head">
+    <div>
+      <h1>ใบบันทึกผล · สนามแข่งโมเลกุล</h1>
+      <p>จดตัวเลขจากจอ แล้วหาความสัมพันธ์ระหว่างมวลกับเวลา</p>
+    </div>
+    <div class="who">
+      <span>ชื่อ <i></i></span>
+      <span>ชั้น <i></i></span>
+      <span>เลขที่ <i></i></span>
+    </div>
+  </div>
+  <div class="rule"></div>
+
+  <!-- ═══ ตอนที่ 1 ═══ -->
+  <section class="part">
+    <div class="part-head">
+      <span class="part-no">1</span>
+      <b>บันทึกผลการแข่งขัน</b>
+      <span>กรอกมวลโมเลกุลและเวลาที่ใช้ ตามที่เห็นบนจอ</span>
+    </div>
+
+    <div class="sets">
+      <div class="setbox">
+        <div class="setname">ชุดที่ 1</div>
+        <table>
+          <thead><tr><th>แก๊ส</th><th>มวล</th><th>เวลา (วิ)</th></tr></thead>
+          <tbody>
+            <tr><td class="gas">He</td><td></td><td></td></tr>
+            <tr><td class="gas">CH₄</td><td></td><td></td></tr>
+            <tr><td class="gas">SO₂</td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="setbox">
+        <div class="setname">ชุดที่ 2</div>
+        <table>
+          <thead><tr><th>แก๊ส</th><th>มวล</th><th>เวลา (วิ)</th></tr></thead>
+          <tbody>
+            <tr><td class="gas">H₂</td><td></td><td></td></tr>
+            <tr><td class="gas">O₂</td><td></td><td></td></tr>
+            <tr><td class="gas">CO₂</td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="setbox">
+        <div class="setname">ชุดที่ 3</div>
+        <table>
+          <thead><tr><th>แก๊ส</th><th>มวล</th><th>เวลา (วิ)</th></tr></thead>
+          <tbody>
+            <tr><td class="gas">He</td><td></td><td></td></tr>
+            <tr><td class="gas">NH₃</td><td></td><td></td></tr>
+            <tr><td class="gas">HCl</td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ตอนที่ 2 ═══ -->
+  <section class="part">
+    <div class="part-head">
+      <span class="part-no">2</span>
+      <b>เทียบเป็นจำนวนเท่า</b>
+      <span>เอาตัวเลขของแก๊สที่หนักกว่า หารด้วยตัวเลขของแก๊สที่เบากว่า</span>
+    </div>
+
+    <table class="calc">
+      <thead>
+        <tr>
+          <th style="width:26%">คู่ที่เทียบ</th>
+          <th style="width:30%">มวลเพิ่มกี่เท่า</th>
+          <th style="width:44%">เวลาเพิ่มกี่เท่า</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="pair"><span class="set">ชุด 1</span> &nbsp;He → CH₄</td>
+          <td class="given">16 ÷ 4 = <span class="blank"></span></td>
+          <td class="prompt">เวลา CH₄ <span class="blank-sm"></span> ÷ เวลา He <span class="blank-sm"></span> = <span class="blank"></span></td>
+        </tr>
+        <tr>
+          <td class="pair"><span class="set">ชุด 1</span> &nbsp;CH₄ → SO₂</td>
+          <td class="given">64 ÷ 16 = <span class="blank"></span></td>
+          <td class="prompt">เวลา SO₂ <span class="blank-sm"></span> ÷ เวลา CH₄ <span class="blank-sm"></span> = <span class="blank"></span></td>
+        </tr>
+        <tr>
+          <td class="pair"><span class="set">ชุด 2</span> &nbsp;H₂ → O₂</td>
+          <td class="given">32 ÷ 2 = <span class="blank"></span></td>
+          <td class="prompt">เวลา O₂ <span class="blank-sm"></span> ÷ เวลา H₂ <span class="blank-sm"></span> = <span class="blank"></span></td>
+        </tr>
+        <tr>
+          <td class="pair"><span class="set">ชุด 3</span> &nbsp;He → HCl</td>
+          <td class="given">36.5 ÷ 4 = <span class="blank"></span></td>
+          <td class="prompt">เวลา HCl <span class="blank-sm"></span> ÷ เวลา He <span class="blank-sm"></span> = <span class="blank"></span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ═══ ตอนที่ 3 ═══ -->
+  <section class="part">
+    <div class="part-head">
+      <span class="part-no">3</span>
+      <b>มองหาความสัมพันธ์</b>
+      <span>ลอกคำตอบจากสองช่องขวาของตอนที่ 2 มาเรียงคู่กันใหม่</span>
+    </div>
+
+    <div class="pairs">
+      <div class="pairbox">มวล <b>4</b> <span class="arrow">→</span> เวลา <span class="blank"></span> เท่า</div>
+      <div class="pairbox">มวล <b>9</b> <span class="arrow">→</span> เวลา <span class="blank"></span> เท่า</div>
+      <div class="pairbox">มวล <b>16</b> <span class="arrow">→</span> เวลา <span class="blank"></span> เท่า</div>
+    </div>
+
+    <p class="ask">ตัวเลขทางซ้ายกับทางขวาเกี่ยวข้องกันอย่างไร</p>
+    <div class="writeline"></div>
+    <div class="writeline"></div>
+  </section>
+
+  <!-- ═══ ตอนที่ 4 ═══ -->
+  <section class="part">
+    <div class="part-head">
+      <span class="part-no">4</span>
+      <b>สรุป</b>
+    </div>
+
+    <div class="concl">
+      <div>เมื่ออุณหภูมิเท่ากัน แก๊สที่มีมวลโมเลกุลมากกว่าจะแพร่ <span class="blank"></span> กว่า</div>
+      <div>ถ้ามวลโมเลกุลเพิ่มขึ้น <b>25 เท่า</b> เวลาที่ใช้จะเพิ่มขึ้น <span class="blank"></span> เท่า
+        <em>(ข้อนี้ไม่มีในการทดลอง ให้ใช้ความสัมพันธ์ที่เพิ่งหาได้)</em></div>
+      <div>เขียนเป็นสูตร &nbsp; r₁ / r₂ = <span class="blank wide"></span></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>สนามแข่งโมเลกุล · กฎการแพร่ของเกรแฮม</span>
+    <a href="index.html">← กลับไปที่เครื่องจำลอง</a>
+  </div>
+
+</div>
+</body>
+</html>

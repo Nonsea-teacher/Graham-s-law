@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>สนามแข่งโมเลกุล · กฎการแพร่ของเกรแฮม</title>
+<meta name="description" content="สื่อการสอนกฎการแพร่ของเกรแฮม ให้นักเรียนเห็นภาพว่าแก๊สหนักแพร่ช้ากว่าแก๊สเบาเท่าไร">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='9' cy='16' r='6' fill='%230B57F0'/%3E%3Ccircle cx='23' cy='16' r='6' fill='%23E02216'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<header class="bar">
+  <span class="brand">สนามแข่งโมเลกุล</span>
+  <ol class="steps" id="steps">
+    <li><button data-step="1" aria-current="step">1</button><span>คำถาม</span></li>
+    <li><button data-step="2">2</button><span>แข่งกัน</span></li>
+    <li><button data-step="3">3</button><span>จับเวลา</span></li>
+    <li><button data-step="4">4</button><span>สูตร</span></li>
+    <li><button data-step="5">5</button><span>ฝึกทำ</span></li>
+  </ol>
+</header>
+
+<main>
+
+<!-- ══════════ 1 ══════════ -->
+<section class="screen is-on" id="screen-1">
+  <h1 class="mega">แก๊สต่างชนิดกัน<br>แพร่เร็วเท่ากันไหม</h1>
+  <p class="lead">ทายก่อน แล้วค่อยดูของจริง</p>
+
+  <div class="duel-cards" id="duel-cards"></div>
+
+  <div class="poll">
+    <p class="poll-q">นักเรียนทายว่า…</p>
+    <div class="poll-opts" id="poll">
+      <button data-guess="light">ตัวเบา<br>แพร่เร็วกว่า</button>
+      <button data-guess="heavy">ตัวหนัก<br>แพร่เร็วกว่า</button>
+      <button data-guess="same">เท่ากัน</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 2 ══════════ -->
+<section class="screen" id="screen-2" hidden>
+  <h2 class="title">แก๊สชนิดใดที่แพร่ได้เร็วกว่ากัน ?</h2>
+
+  <div class="track-set is-duel" id="duel">
+    <div class="track" data-lane="0">
+      <div class="plate plate-blue">
+        <span class="plate-formula"></span>
+        <span class="plate-mass"></span>
+      </div>
+      <div class="strip"><canvas></canvas></div>
+    </div>
+    <div class="track" data-lane="1">
+      <div class="plate plate-red">
+        <span class="plate-formula"></span>
+        <span class="plate-mass"></span>
+      </div>
+      <div class="strip"><canvas></canvas></div>
+    </div>
+    <div class="countdown" id="count-2" hidden><span></span></div>
+  </div>
+
+  <p class="legend">ป้ายชื่อที่วิ่งอยู่บนลู่ คือตำแหน่งของกลุ่มก้อนแก๊ส — ให้นักเรียนดูว่าป้ายไหนถึงเส้นชัยก่อน</p>
+
+  <div class="actionbar">
+    <button class="btn btn-go" id="go-2">ปล่อยพร้อมกัน</button>
+    <button class="btn btn-slow" id="slow-2" aria-pressed="false">สโลว์โมชัน</button>
+    <div class="pills" id="pair-pick" role="radiogroup" aria-label="เลือกคู่แข่ง"></div>
+  </div>
+
+  <p class="reveal" id="verdict-2" hidden></p>
+</section>
+
+<!-- ══════════ 3 ══════════ -->
+<section class="screen" id="screen-3" hidden>
+  <div class="titlerow">
+    <h2 class="title">คราวนี้จับเวลาด้วย</h2>
+    <div class="titlerow-tools">
+      <button class="btn btn-go" id="go-3">ปล่อยพร้อมกัน</button>
+      <button class="btn btn-slow" id="slow-3" aria-pressed="false">สโลว์โมชัน</button>
+      <span class="clock"><b id="clock-3">0.0</b><i>วินาที</i></span>
+    </div>
+  </div>
+
+  <div class="setrow">
+    <div class="pills" id="set-pick" role="radiogroup" aria-label="เลือกชุดการทดลอง"></div>
+    <p class="setrow-note">จดมวลโมเลกุลและเวลาที่ได้ลงในใบงาน แล้วเปรียบเทียบทั้งสามชุด</p>
+  </div>
+
+  <div class="track-set is-trio" id="trio">
+    <div class="track" data-lane="0">
+      <div class="plate plate-blue"><span class="plate-formula"></span><span class="plate-mass"></span></div>
+      <div class="strip"><canvas></canvas></div>
+      <div class="result"></div>
+    </div>
+    <div class="track" data-lane="1">
+      <div class="plate plate-amber"><span class="plate-formula"></span><span class="plate-mass"></span></div>
+      <div class="strip"><canvas></canvas></div>
+      <div class="result"></div>
+    </div>
+    <div class="track" data-lane="2">
+      <div class="plate plate-red"><span class="plate-formula"></span><span class="plate-mass"></span></div>
+      <div class="strip"><canvas></canvas></div>
+      <div class="result"></div>
+    </div>
+    <div class="countdown" id="count-3" hidden><span></span></div>
+  </div>
+</section>
+
+<!-- ══════════ 4 ══════════ -->
+<section class="screen" id="screen-4" hidden>
+  <h2 class="title">เขียนให้เป็นสูตร</h2>
+
+  <div class="split4">
+  <div class="build">
+    <p class="build-line" data-i="0">หนักกว่า <span class="arw">→</span> ใช้เวลามากกว่า</p>
+    <p class="build-line" data-i="1">หนักกว่า <b>9 เท่า</b> <span class="arw">→</span> ใช้เวลามากกว่า <b>3 เท่า</b></p>
+    <p class="build-line" data-i="2">หนักกว่า <b>M เท่า</b> <span class="arw">→</span> ใช้เวลามากกว่า
+      <b><span class="sqrt-inline"><svg viewBox="0 0 26 100" preserveAspectRatio="none" aria-hidden="true"><path d="M1 58 L8 58 L14 95 L25 3" vector-effect="non-scaling-stroke"/></svg><span>M</span></span> เท่า</b></p>
+
+    <p class="build-bridge" data-i="3">ใช้เวลามากกว่า <b>3 เท่า</b> ก็คือ <b>แพร่ช้ากว่า 3 เท่า</b></p>
+
+    <div class="formula" data-i="4">
+      <div class="formula-thai">
+        <span>เร็วกว่ากี่เท่า</span>
+        <span class="eq-sm">=</span>
+        <span class="sqrt-inline"><svg viewBox="0 0 26 100" preserveAspectRatio="none" aria-hidden="true"><path d="M1 58 L8 58 L14 95 L25 3" vector-effect="non-scaling-stroke"/></svg><span>มวลตัวหนัก ÷ มวลตัวเบา</span></span>
+      </div>
+
+      <div class="formula-split"><span>เขียนย่อ</span></div>
+
+      <div class="formula-sym">
+        <span class="frac"><i>r₁</i><i>r₂</i></span>
+        <span class="eq">=</span>
+        <span class="root">
+          <svg class="rsign" viewBox="0 0 26 100" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M1 58 L8 58 L14 95 L25 3" vector-effect="non-scaling-stroke"/>
+          </svg>
+          <span class="frac"><i>M₂</i><i>M₁</i></span>
+        </span>
+      </div>
+    </div>
+
+    <div class="legend-key" data-i="5">
+      <div><b>r₁</b> อัตราการแพร่ของตัวเบา<span><b>M₁</b> มวลของตัวเบา</span></div>
+      <div><b>r₂</b> อัตราการแพร่ของตัวหนัก<span><b>M₂</b> มวลของตัวหนัก</span></div>
+    </div>
+  </div>
+
+  <div class="side4">
+  <div class="graham" data-i="6">
+    <div class="graham-head">
+      <span class="graham-year">1833</span>
+      <div>
+        <b>โทมัส เกรแฮม</b>
+        <span>นักเคมีชาวสกอตแลนด์</span>
+      </div>
+    </div>
+    <p>เกรแฮมทดลองปล่อยแก๊สผ่านรูเล็ก ๆ แล้ววัดว่าแก๊สแต่ละชนิดผ่านไปได้เร็วแค่ไหน จนพบความสัมพันธ์เดียวกับที่เราเพิ่งเห็นในสนามแข่ง ความสัมพันธ์นี้จึงถูกเรียกว่า <b>กฎการแพร่ของเกรแฮม</b></p>
+  </div>
+
+  <div class="calc" data-i="7">
+    <p class="calc-title">ลองแทนค่าดู</p>
+    <div class="calc-pick">
+      <div class="pickgroup" id="pick-a" data-side="a"></div>
+      <span class="calc-vs">กับ</span>
+      <div class="pickgroup" id="pick-b" data-side="b"></div>
+    </div>
+    <ol class="calc-steps" id="calc-steps"></ol>
+  </div>
+  </div>
+  </div>
+</section>
+
+<!-- ══════════ 5 ══════════ -->
+<section class="screen" id="screen-5" hidden>
+  <h2 class="title">ลองทำเอง</h2>
+  <div class="quiz" id="quiz"></div>
+</section>
+
+</main>
+
+<footer class="nav">
+  <button class="btn btn-ghost" id="prev">ย้อนกลับ</button>
+  <button class="btn btn-next" id="next">ถัดไป</button>
+</footer>
+
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>
