@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>QR · สนามแข่งโมเลกุล</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='9' cy='16' r='6' fill='%230B57F0'/%3E%3Ccircle cx='23' cy='16' r='6' fill='%23E02216'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --ground: #F0F1F3;
+    --ink: #14161C;
+    --ink-2: #565C6B;
+    --line: #D9DBE1;
+    --blue: #0B57F0;
+    --red: #DB2216;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: 'Kanit', 'Noto Sans Thai', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .card {
+    width: min(100%, 460px);
+    background: #fff;
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: 0 2px 0 rgba(14,20,38,.10), 0 24px 50px rgba(14,20,38,.14);
+  }
+
+  /* แถบหัวเป็นสีทีมทั้งสอง เหมือนสนามแข่งที่อยู่ปลายทางของ QR นี้ */
+  .band { display: flex; height: 10px; }
+  .band i { display: block; flex: 1; }
+  .band i:first-child { background: var(--blue); }
+  .band i:last-child { background: var(--red); }
+
+  .head { padding: 26px 30px 4px; text-align: center; }
+  .head h1 {
+    margin: 0;
+    font-size: 30px; font-weight: 800; letter-spacing: -.02em;
+  }
+  .head p { margin: 4px 0 0; font-size: 15px; color: var(--ink-2); }
+
+  .qr { padding: 14px 30px 0; }
+  .qr img { display: block; width: 100%; height: auto; }
+
+  .cta {
+    margin: 6px 30px 0;
+    padding: 12px;
+    border-radius: 14px;
+    background: var(--ink);
+    color: #fff;
+    text-align: center;
+    font-size: 17px; font-weight: 700;
+  }
+
+  .url {
+    margin: 12px 30px 26px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-2);
+    word-break: break-all;
+  }
+
+  .note {
+    width: min(100%, 460px);
+    margin-top: 16px;
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--ink-2);
+  }
+  .note a { color: var(--ink); }
+
+  @media print {
+    body { background: #fff; padding: 0; display: block; }
+    .card {
+      width: 150mm; margin: 12mm auto 0;
+      box-shadow: none; border: 1.5px solid var(--line);
+    }
+    .note { display: none; }
+    @page { size: A4; margin: 12mm; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="band" aria-hidden="true"><i></i><i></i></div>
+
+  <div class="head">
+    <h1>สนามแข่งโมเลกุล</h1>
+    <p>กฎการแพร่ของเกรแฮม</p>
+  </div>
+
+  <div class="qr">
+    <img src="assets/qr.svg" alt="คิวอาร์โค้ดสำหรับเปิดสื่อสนามแข่งโมเลกุล">
+  </div>
+
+  <p class="cta">สแกนเพื่อเปิดในแท็บเล็ต</p>
+
+  <p class="url">https://nonsea-teacher.github.io/Graham-s-law/</p>
+</div>
+
+<p class="note">
+  ฉายหน้าห้องให้นักเรียนสแกนพร้อมกัน หรือสั่งพิมพ์ด้วย Ctrl + P ·
+  <a href="index.html">เปิดสื่อ</a>
+</p>
+
+</body>
+</html>
